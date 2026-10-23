@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaiyariGhar Mock Test</title>
+    <style>
+        :root {
+            --primary: #1a3a6b; /* नीला */
+            --secondary: #f57c00; /* नारंगी */
+            --accent: #2e7d32; /* हरा */
+            --bg: #f5f7fa;
+            --text: #333;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); }
+        
+        /* Utility */
+        .hide { display: none !important; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background-color: var(--primary); color: var(--white); }
+        .btn-primary:hover { background-color: #122a4f; }
+        .btn-secondary { background-color: var(--secondary); color: var(--white); }
+        .btn-secondary:hover { background-color: #d16a00; }
+        .btn-accent { background-color: var(--accent); color: var(--white); width: 100%; margin-top: 15px; }
+
+        /* Login & Dashboard */
+        .container { max-width: 800px; margin: 50px auto; padding: 20px; }
+        .card { background: var(--white); padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .logo-text { font-size: 32px; color: var(--primary); font-weight: bold; margin-bottom: 5px; }
+        .tagline { color: var(--secondary); font-size: 18px; margin-bottom: 25px; font-weight: 500; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        
+        /* Test Interface */
+        .header { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .header .brand { font-size: 20px; font-weight: bold; }
+        .timer { font-size: 20px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 5px; }
+        
+        .test-layout { display: flex; flex-direction: row; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 10px; }
+        .question-area { flex: 1; background: var(--white); padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .sidebar { width: 300px; background: var(--white); padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: fit-content; }
+        
+        .q-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: var(--primary); }
+        .options label { display: block; padding: 12px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #f0f4f8; }
+        .options input[type="radio"] { margin-right: 10px; transform: scale(1.2); }
+        
+        .action-buttons { display: flex; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; gap: 10px; }
+        .mark-review { background: #9c27b0; color: white; }
+        
+        /* Palette */
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .pallet-btn { padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #eee; cursor: pointer; font-weight: bold; }
+        .pallet-btn.active { border: 2px solid #000; }
+        .pallet-btn.answered { background: var(--accent); color: white; border-color: var(--accent); }
+        .pallet-btn.marked { background: #9c27b0; color: white; border-color: #9c27b0; }
+        .pallet-btn.not-answered { background: #f44336; color: white; border-color: #f44336; }
+
+        /* Result */
+        .result-card { max-width: 800px; margin: 20px auto; background: var(--white); padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .score-box { text-align: center; margin-bottom: 20px; }
+        .score-box h1 { font-size: 48px; color: var(--accent); }
+        .sol-box { margin-top: 20px; padding: 15px; border-left: 5px solid #ccc; background: #f9f9f9; }
+        .sol-correct { border-color: var(--accent); }
+        .sol-wrong { border-color: #f44336; }
+        
+        @media (max-width: 768px) {
+            .test-layout { flex-direction: column-reverse; }
+            .sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔐 1. LOGIN SCREEN -->
+    <div id="loginScreen" class="container">
+        <div class="card">
+            <div class="logo-text">🏠 TaiyariGhar</div>
+            <div class="tagline">मेहनत आपकी, साथ हमारा</div>
+            <p style="margin-bottom: 20px; color: #666;">Student Login</p>
+            <input type="text" id="loginRoll" placeholder="Roll Number (e.g. 1001)">
+            <input type="password" id="loginPass" placeholder="Password (e.g. 1234)">
+            <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Login</button>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">*Testing: Roll- 1001, Pass- 1234</p>
+        </div>
+    </div>
+
+    <!-- 📊 2. DASHBOARD -->
+    <div id="dashboardScreen" class="container hide">
+        <div class="card" style="text-align: left;">
+            <h2 style="color: var(--primary);">नमस्ते, <span id="studentName">Student</span>!</h2>
+            <p style="color: #666; margin-bottom: 20px;">आपका स्वागत है TaiyariGhar पर।</p>
+            
+            <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                <h3 style="color: var(--secondary);">📚 UPPET History (Previous Year)</h3>
+                <p style="margin: 10px 0; color: #555;">⏱️ 15 Mins | 15 Questions | 15 Marks</p>
+                <button class="btn btn-accent" onclick="startTest()">Start Test</button>
+            </div>
+            <button class="btn" style="margin-top: 20px; background: #ccc;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- 📝 3. TEST INTERFACE -->
+    <div id="testScreen" class="hide">
+        <div class="header">
+            <div class="brand">🏠 TaiyariGhar Mock</div>
+            <div class="timer" id="timerDisplay">15:00</div>
+        </div>
+        
+        <div class="test-layout">
+            <div class="question-area">
+                <div class="q-header" id="qNumberText">Question 1</div>
+                <div id="questionText" style="font-size: 18px; margin-bottom: 20px; line-height: 1.5;"></div>
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="action-buttons">
+                    <div>
+                        <button class="btn mark-review" onclick="toggleMark()" id="markBtn">⭐ Mark for Review</button>
+                        <button class="btn" style="background:#eee;" onclick="clearResponse()">Clear</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="prevQuestion()">← Prev</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()">Save & Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3 style="font-size: 16px; margin-bottom: 10px;">Question Palette</h3>
+                <div class="palette-grid" id="paletteContainer"></div>
+                <div style="margin-top: 20px; font-size: 12px;">
+                    <p><span style="display:inline-block;width:15px;height:15px;background:var(--accent);"></span> Answered</p>
+                    <p><span style="display:inline-block;width:15px;height:15px;background:#f44336;"></span> Not Answered</p>
+                    <p><span style="display:inline-block;width:15px;height:15px;background:#9c27b0;"></span> Marked for Review</p>
+                </div>
+                <button class="btn btn-secondary" style="width:100%; margin-top: 20px;" onclick="submitTest()">Submit Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏆 4. RESULT SCREEN -->
+    <div id="resultScreen" class="hide">
+        <div class="result-card">
+            <div class="score-box">
+                <div class="logo-text">🏠 TaiyariGhar</div>
+                <div class="tagline" style="margin-bottom: 10px;">Result</div>
+                <h1 id="finalScore">0 / 15</h1>
+                <p id="finalPercent" style="font-size: 20px;">0%</p>
+                <p id="finalRank" style="color: var(--secondary); font-weight: bold;">Rank: #1 (Simulated)</p>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-bottom: 20px;" onclick="window.print()">📄 Download PDF Result</button>
+            
+            <h3 style="border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px;">Detailed Solutions</h3>
+            <div id="solutionsContainer"></div>
+
+            <button class="btn btn-secondary" style="width:100%; margin-top: 20px;" onclick="location.reload()">Back to Home</button>
+        </div>
+    </div>
+
+<script>
+    // --- QUESTIONS DATA (First 15 from your file) ---
+    const questionsData = [
+        { q: '"पशुपति मुहर" सिंधु घाटी सभ्यता के किस स्थल से मिली है?', o: ["बनवाली", "लोथल", "कालीबंगा", "मोहनजोदड़ो"], a: 3, s: '“पशुपति मुहर” सिंधु घाटी सभ्यता के मोहनजोदड़ो स्थल से मिली है। सैन्धव कालीन मोहनजोदड़ो पाकिस्तान में सिंधु नदी के तट पर अवस्थित है।' },
+        { q: '"बनवाली" — सिंधु घाटी सभ्यता का एक प्रमुख नगर, वर्तमान में भारत के निम्नलिखित में से किस राज्य में स्थित है?', o: ["गुजरात", "मध्य प्रदेश", "राजस्थान", "हरियाणा"], a: 3, s: '“बनवाली” सिंधु-घाटी सभ्यता का प्रमुख स्थल, वर्तमान में भारत के हरियाणा राज्य में स्थित है।' },
+        { q: 'हड़प्पा स्थल की सर्वप्रथम संक्षिप्त खुदाई निम्नलिखित में से किसके द्वारा की गई थी?', o: ["राखालदास बनर्जी", "बी. के. थापर", "सर अलेक्जेंडर कनिंघम", "अर्नेस्ट जे. एच. मैके"], a: 2, s: 'अलेक्जेंडर कनिंघम (1814–1893) भारतीय पुरातत्व सर्वेक्षण (ASI) के प्रमुख संस्थापक थे। उन्होंने 1853 में हड़प्पा से एक मुहर पाई थी।' },
+        { q: 'निम्नलिखित में से किस स्थान पर "पुजारी राजाओं" की मूर्ति मिली थी?', o: ["लोथल", "मोहनजोदड़ो", "कोटदीजी", "हड़प्पा"], a: 1, s: 'सिंधु घाटी सभ्यता के स्थल मोहनजोदड़ो से “पुजारी राजाओं” की मूर्ति मिली थी। मोहनजोदड़ो का अर्थ ‘मृतकों का टीला’ होता है।' },
+        { q: 'हड़प्पा के एक बन्दरगाह का नाम लिखिए।', o: ["लोथल", "नागपट्टनम", "महास्थानगढ़", "सिकंदरिया"], a: 0, s: 'लोथल हड़प्पा कालीन बन्दरगाह है। यह भारत के गुजरात राज्य में भोगवा नदी के तट पर स्थित है।' },
+        { q: 'हड़प्पा सभ्यता के दौरान डांसिंग गर्ल (नर्तकी) की कांस्य प्रतिमा बनाने के लिए किस तकनीक का इस्तेमाल किया गया था?', o: ["पत्थर की नक्काशी", "हाथीदाँत नक्काशी", "लकड़ी की नक्काशी", "मोम लॉस्ट ढलाई (कास्टिंग)"], a: 3, s: 'हड़प्पा सभ्यता के दौरान डांसिंग गर्ल (नर्तकी) की कांस्य प्रतिमा बनाने के लिए मोम लॉस्ट ढलाई (कास्टिंग) तकनीक का प्रयोग किया गया था।' },
+        { q: 'हड़प्पाकाल का कौन-सा नगर, तीन भागों में विभाजित था?', o: ["लोथल", "मोहनजोदड़ो", "कालीबंगा", "धौलावीरा"], a: 3, s: 'हड़प्पाकाल का पुरास्थल धौलावीरा गुजरात के ‘कच्छ के रण’ के मध्य स्थित है। धौलावीरा तीन भागों में विभाजित था — किला, मध्य नगर तथा निचला नगर।' },
+        { q: 'हड़प्पा संस्कृति की मुहर और टेराकोटा कला पर निम्नलिखित में से किस जानवर को दर्शाया नहीं गया था?', o: ["बाघ", "गाय", "गैंडा", "हाथी"], a: 1, s: 'हड़प्पा संस्कृति की मुहर और टेराकोटा कला पर ‘गाय’ को नहीं दर्शाया गया था।' },
+        { q: '‘मोहनजोदड़ो’ शब्द का अर्थ क्या है?', o: ["पसंदीदा शहर", "माउंड ऑफ द डेड (मृतकों का टीला)", "रहने की जगह", "एक बाजार क्षेत्र"], a: 1, s: 'मोहनजोदड़ो शब्द से अभिप्राय ‘मृतकों का टीला’ (Mound of the dead) होता है।' },
+        { q: 'सिंधु घाटी सभ्यता के बारे में इनमें से कौन-सा कथन सत्य है?', o: ["सिंधु लोग कपास का उत्पादन करने वाले पहले लोग थे।", "उन्होंने लकड़ी के बक्से में अनाज भण्डारित किया।", "सिंधु घाटी सभ्यता पश्चिम बंगाल तक फैली थी।", "सिंधु लोग घोड़ों को बड़े पैमाने पर पालते थे।"], a: 0, s: 'सिंधु घाटी सभ्यता के निवासी कपास के उत्पादन में संसार भर में प्रथम माने जाते थे।' },
+        { q: 'हड़प्पा सभ्यता के एक हिस्से, लोथल की खुदाई की खोज किसने की थी?', o: ["दया राम साहनी", "राखालदास बनर्जी", "एस. आर. राव", "आर. एस. बिष्ट"], a: 2, s: 'भोगवा नदी (अहमदाबाद, गुजरात) के तट पर स्थित लोथल की खोज सर्वप्रथम एस. आर. राव ने की थी।' },
+        { q: 'सिंधु सभ्यता में घोड़े की अस्थियों का अवशेष कहाँ मिला?', o: ["बनवाली", "चन्हूदड़ो", "सुत्कागेंडोर", "सुरकोटदा"], a: 3, s: 'सुरकोटदा गुजरात के कच्छ जिले में स्थित है, जहाँ से घोड़े की अस्थियाँ प्राप्त हुई हैं।' },
+        { q: 'निम्नलिखित में से कौन-सा सिंधु घाटी की सभ्यता से सम्बन्धित स्थल नहीं है?', o: ["कालीबंगा", "रोपड़", "पाटलिपुत्र", "लोथल"], a: 2, s: 'पाटलिपुत्र की स्थापना हर्यक वंश के शासक उदायिन ने की थी। यह सिंधु घाटी की सभ्यता से सम्बन्धित स्थल नहीं है।' },
+        { q: 'छठी से 14वीं शताब्दी तक निम्नलिखित में से कौन-सा सबसे शक्तिशाली महाजनपद था?', o: ["अंग", "मगध", "वैशाली", "वज्जि"], a: 1, s: 'छठी शताब्दी से 14वीं शताब्दी तक मगध सबसे शक्तिशाली महाजनपद था।' },
+        { q: 'निम्न में से सूरसेन महाजनपद की राजधानी कौन-सी थी?', o: ["वैशाली", "काशी", "चंपा", "मथुरा"], a: 3, s: 'सूरसेन महाजनपद की राजधानी मथुरा थी।' }
+    ];
+
+    // --- STATE VARIABLES ---
+    let currentQIndex = 0;
+    let testQuestions = [];
+    let userAnswers = {}; 
+    let markedForReview = {};
+    let timerInterval;
+    let timeLeft = 15 * 60; // 15 minutes in seconds
+
+    // --- LOGIN SYSTEM ---
+    function doLogin() {
+        const roll = document.getElementById('loginRoll').value;
+        const pass = document.getElementById('loginPass').value;
+        
+        // Google Sheet connect hone tak dummy login
+        if(roll === "1001" && pass === "1234") {
+            document.getElementById('loginScreen').classList.add('hide');
+            document.getElementById('dashboardScreen').classList.remove('hide');
+            document.getElementById('studentName').innerText = "Ravi Kumar";
+        } else {
+            alert("गलत रोल नंबर या पासवर्ड! (इस्तेमाल करें: 1001 / 1234)");
+        }
+    }
+
+    function logout() { location.reload(); }
+
+    // --- SHUFFLE & START TEST ---
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function startTest() {
+        document.getElementById('dashboardScreen').classList.add('hide');
+        document.getElementById('testScreen').classList.remove('hide');
+
+        // Questions Shuffle
+        testQuestions = shuffleArray([...questionsData]);
+
+        // Options Shuffle (Correct answer track rakhna)
+        testQuestions = testQuestions.map(q => {
+            let originalCorrectText = q.o[q.a];
+            let shuffledOptions = shuffleArray([...q.o]);
+            let newAnswerIndex = shuffledOptions.indexOf(originalCorrectText);
+            return { q: q.q, o: shuffledOptions, a: newAnswerIndex, s: q.s };
+        });
+
+        loadQuestion();
+        buildPalette();
+        startTimer();
+    }
+
+    // --- TIMER ---
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("समय समाप्त हो गया है! टेस्ट सबमिट हो रहा है।");
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    // --- QUESTION PALETTE ---
+    function buildPalette() {
+        const container = document.getElementById('paletteContainer');
+        container.innerHTML = '';
+        testQuestions.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'pallet-btn';
+            btn.innerText = i + 1;
+            btn.onclick = () => {
+                currentQIndex = i;
+                loadQuestion();
+            };
+            container.appendChild(btn);
+        });
+        updatePalette();
+    }
+
+    function updatePalette() {
+        const buttons = document.getElementById('paletteContainer').children;
+        for (let i = 0; i < testQuestions.length; i++) {
+            buttons[i].className = 'pallet-btn';
+            if (markedForReview[i]) buttons[i].classList.add('marked');
+            else if (userAnswers[i] !== undefined) buttons[i].classList.add('answered');
+            else buttons[i].classList.add('not-answered');
+            
+            if (i === currentQIndex) buttons[i].classList.add('active');
+        }
+    }
+
+    // --- LOAD QUESTION ---
+    function loadQuestion() {
+        const q = testQuestions[currentQIndex];
+        document.getElementById('qNumberText').innerText = `Question ${currentQIndex + 1}`;
+        document.getElementById('questionText').innerText = q.q;
+        
+        const optContainer = document.getElementById('optionsContainer');
+        optContainer.innerHTML = '';
+        
+        q.o.forEach((opt, i) => {
+            const label = document.createElement('label');
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'option';
+            radio.value = i;
+            if (userAnswers[currentQIndex] === i) radio.checked = true;
+            
+            radio.onchange = () => {
+                userAnswers[currentQIndex] = i;
+                saveToLocalStorage();
+                updatePalette();
+            };
+            
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(opt));
+            optContainer.appendChild(label);
+        });
+
+        document.getElementById('markBtn').style.background = markedForReview[currentQIndex] ? '#d32f2f' : '#9c27b0';
+        document.getElementById('markBtn').innerText = markedForReview[currentQIndex] ? '❌ Remove Mark' : '⭐ Mark for Review';
+        updatePalette();
+    }
+
+    // --- ACTIONS ---
+    function nextQuestion() {
+        if (currentQIndex < testQuestions.length - 1) {
+            currentQIndex++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQIndex > 0) {
+            currentQIndex--;
+            loadQuestion();
+        }
+    }
+
+    function toggleMark() {
+        markedForReview[currentQIndex] = !markedForReview[currentQIndex];
+        loadQuestion();
+    }
+
+    function clearResponse() {
+        delete userAnswers[currentQIndex];
+        saveToLocalStorage();
+        loadQuestion();
+    }
+
+    // --- AUTO SAVE (LocalStorage) ---
+    function saveToLocalStorage() {
+        localStorage.setItem('tg_answers', JSON.stringify(userAnswers));
+        localStorage.setItem('tg_marked', JSON.stringify(markedForReview));
+    }
+
+    // Load saved data on refresh (if any)
+    window.onload = () => {
+        let savedAnswers = localStorage.getItem('tg_answers');
+        let savedMarked = localStorage.getItem('tg_marked');
+        if(savedAnswers) userAnswers = JSON.parse(savedAnswers);
+        if(savedMarked) markedForReview = JSON.parse(savedMarked);
+    }
+
+    // --- SUBMIT TEST ---
+    function submitTest() {
+        if(!confirm("क्या आप वाकई टेस्ट सबमिट करना चाहते हैं?")) return;
+        
+        clearInterval(timerInterval);
+        localStorage.removeItem('tg_answers');
+        localStorage.removeItem('tg_marked');
+
+        document.getElementById('testScreen').classList.add('hide');
+        document.getElementById('resultScreen').classList.remove('hide');
+
+        let score = 0;
+        let solutionsHTML = '';
+
+        testQuestions.forEach((q, i) => {
+            let isCorrect = userAnswers[i] === q.a;
+            if (isCorrect) score++;
+
+            // Solution Box HTML
+            let statusClass = isCorrect ? 'sol-correct' : 'sol-wrong';
+            let userAnswerText = userAnswers[i] !== undefined ? q.o[userAnswers[i]] : "नहीं दिया गया";
+            let correctAnswerText = q.o[q.a];
+
+            solutionsHTML += `
+                <div class="sol-box ${statusClass}">
+                    <p style="font-weight:bold; margin-bottom:8px;">Q${i+1}. ${q.q}</p>
+                    <p><strong>आपका उत्तर:</strong> <span style="color:${isCorrect ? 'green' : 'red'}">${userAnswerText}</span></p>
+                    <p><strong>सही उत्तर:</strong> <span style="color:green">${correctAnswerText}</span></p>
+                    <p style="font-size:14px; color:#555; margin-top:8px;"><strong>व्याख्या:</strong> ${q.s}</p>
+                </div>
+            `;
+        });
+
+        let percent = ((score / testQuestions.length) * 100).toFixed(1);
+        
+        document.getElementById('finalScore').innerText = `${score} / ${testQuestions.length}`;
+        document.getElementById('finalPercent').innerText = `${percent}%`;
+        document.getElementById('finalRank').innerText = score > 10 ? "Rank: #1 (Excellent)" : "Rank: #12 (Needs Improvement)";
+        document.getElementById('solutionsContainer').innerHTML = solutionsHTML;
+    }
+</script>
+</body>
+</html>
