@@ -37,11 +37,18 @@
         
         /* Dashboard Categories */
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; text-align: left; }
-        .category-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fff; transition: 0.3s; }
-        .category-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .category-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fff; transition: 0.3s; cursor: pointer; }
+        .category-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-3px); }
         .category-card h3 { color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--secondary); padding-bottom: 5px; }
         .category-card p { color: #666; font-size: 14px; margin-bottom: 15px; }
         
+        /* Sub-Menu (Tests inside Category) */
+        .test-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; text-align: left; }
+        .test-item { border: 1px solid #ddd; padding: 15px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; transition: 0.2s; }
+        .test-item:hover { background: #f0f4f8; border-color: var(--primary); }
+        .test-info h4 { color: var(--primary); margin-bottom: 5px; font-size: 18px; }
+        .test-info p { color: #666; font-size: 14px; }
+
         /* Test Interface */
         .header { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .header .brand { font-size: 20px; font-weight: bold; }
@@ -85,6 +92,7 @@
         @media (max-width: 768px) {
             .test-layout { flex-direction: column-reverse; }
             .sidebar { width: 100%; }
+            .test-item { flex-direction: column; text-align: center; gap: 10px; }
         }
 
         /* 📄 PDF Print Settings (2 Columns) */
@@ -113,19 +121,18 @@
         </div>
     </div>
 
-    <!-- 📊 2. DASHBOARD (Categories) -->
+    <!-- 📊 2. MAIN DASHBOARD (Categories) -->
     <div id="dashboardScreen" class="container hide">
         <div class="card" style="text-align: left;">
             <h2 style="color: var(--primary);">नमस्ते, <span id="studentName">Student</span>!</h2>
-            <p style="color: #666; margin-bottom: 20px;">अपनी परीक्षा का चयन करें:</p>
+            <p style="color: #666; margin-bottom: 20px;">अपनी परीक्षा श्रेणी चुनें:</p>
             
             <div class="dashboard-grid">
-                <!-- UP State Exam (Active) -->
-                <div class="category-card" style="border: 2px solid var(--secondary);">
+                <!-- UP State Exam (Active - Opens Sub-menu) -->
+                <div class="category-card" style="border: 2px solid var(--secondary);" onclick="showUPStateMenu()">
                     <h3>🏛️ UP State Exam</h3>
-                    <p>UPPET History Previous Year</p>
-                    <p style="color: var(--accent); font-weight: bold;">⏱️ 15 Mins | 15 Qs</p>
-                    <button class="btn btn-accent" onclick="startTest()">Start Test</button>
+                    <p>UPPET, UP Police, VDO आदि</p>
+                    <p style="color: var(--primary); font-weight: bold;">Click to View Tests →</p>
                 </div>
 
                 <!-- SSC (Coming Soon) -->
@@ -147,7 +154,37 @@
         </div>
     </div>
 
-    <!-- 📝 3. TEST INTERFACE -->
+    <!-- 📂 3. SUB-MENU SCREEN (Tests inside UP State Exam) -->
+    <div id="subMenuScreen" class="container hide">
+        <div class="card" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary);">🏛️ UP State Exam</h2>
+                <button class="btn" style="background:#eee; padding: 8px 15px;" onclick="backToDashboard()">← Back</button>
+            </div>
+            
+            <div class="test-list">
+                <!-- Test Item 1 -->
+                <div class="test-item">
+                    <div class="test-info">
+                        <h4>UPPET History Previous Year</h4>
+                        <p>⏱️ 15 Mins | 15 Questions | 15 Marks</p>
+                    </div>
+                    <button class="btn btn-accent" style="width: auto; margin: 0;" onclick="startTest()">Start Test</button>
+                </div>
+
+                <!-- Test Item 2 (Dummy for future) -->
+                <div class="test-item" style="opacity: 0.6;">
+                    <div class="test-info">
+                        <h4>UP Police GK Mock 1</h4>
+                        <p>⏱️ 20 Mins | 20 Questions | 20 Marks</p>
+                    </div>
+                    <button class="btn" style="background: #ccc; color: #666;" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📝 4. TEST INTERFACE -->
     <div id="testScreen" class="hide">
         <div class="header">
             <div class="brand">🏠 TaiyariGhar Mock</div>
@@ -189,7 +226,7 @@
         </div>
     </div>
 
-    <!-- 🏆 4. RESULT SCREEN -->
+    <!-- 🏆 5. RESULT SCREEN -->
     <div id="resultScreen" class="hide">
         <div class="result-card">
             <div class="score-box">
@@ -237,11 +274,10 @@
     let visitedQuestions = {}; 
     let timerInterval;
     
-    // 15 Minutes Timer
     const TOTAL_TIME = 15 * 60; 
     let timeLeft = TOTAL_TIME;
 
-    // --- LOGIN SYSTEM ---
+    // --- LOGIN & NAVIGATION ---
     function doLogin() {
         const roll = document.getElementById('loginRoll').value;
         const pass = document.getElementById('loginPass').value;
@@ -257,6 +293,18 @@
 
     function logout() { location.reload(); }
 
+    // Main Dashboard se Sub-Menu me jane ke liye
+    function showUPStateMenu() {
+        document.getElementById('dashboardScreen').classList.add('hide');
+        document.getElementById('subMenuScreen').classList.remove('hide');
+    }
+
+    // Sub-Menu se wapas Dashboard me jane ke liye
+    function backToDashboard() {
+        document.getElementById('subMenuScreen').classList.add('hide');
+        document.getElementById('dashboardScreen').classList.remove('hide');
+    }
+
     // --- SHUFFLE & START TEST ---
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -267,7 +315,7 @@
     }
 
     function startTest() {
-        document.getElementById('dashboardScreen').classList.add('hide');
+        document.getElementById('subMenuScreen').classList.add('hide');
         document.getElementById('testScreen').classList.remove('hide');
 
         testQuestions = shuffleArray([...questionsData]);
@@ -294,7 +342,6 @@
             
             timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
 
-            // 20% time bache to red ho jaye
             if(timeLeft <= (TOTAL_TIME * 0.2)) {
                 timerEl.classList.add('timer-danger');
                 if(timeLeft === Math.floor(TOTAL_TIME * 0.2)) {
@@ -332,17 +379,16 @@
         for (let i = 0; i < testQuestions.length; i++) {
             buttons[i].className = 'pallet-btn'; 
             
-            // Logic for colors (SSC / Railway style)
             if (userAnswers[i] !== undefined && markedForReview[i]) {
-                buttons[i].classList.add('answered-marked'); // जवाब भी दिया और मार्क भी किया
+                buttons[i].classList.add('answered-marked'); 
             } else if (markedForReview[i]) {
-                buttons[i].classList.add('marked'); // सिर्फ मार्क किया (बैंगनी)
+                buttons[i].classList.add('marked'); 
             } else if (userAnswers[i] !== undefined) {
-                buttons[i].classList.add('answered'); // जवाब दिया (हरा)
+                buttons[i].classList.add('answered'); 
             } else if (visitedQuestions[i]) {
-                buttons[i].classList.add('not-answered'); // देखा लेकिन जवाब नहीं दिया (लाल)
+                buttons[i].classList.add('not-answered'); 
             } else {
-                buttons[i].classList.add('not-visited'); // ग्रे (नहीं देखा)
+                buttons[i].classList.add('not-visited'); 
             }
             
             if (i === currentQIndex) buttons[i].classList.add('active');
@@ -352,7 +398,7 @@
     // --- LOAD QUESTION ---
     function loadQuestion() {
         const q = testQuestions[currentQIndex];
-        visitedQuestions[currentQIndex] = true; // Mark as visited
+        visitedQuestions[currentQIndex] = true; 
 
         document.getElementById('qNumberText').innerText = `Question ${currentQIndex + 1}`;
         document.getElementById('questionText').innerText = q.q;
